@@ -34,7 +34,6 @@ def get_steer_matrix_right_lane_markings(shape: Tuple[int, int]) -> np.ndarray:
     """
 
     # TODO: implement your own solution here
-    print("$")
     steer_matrix_right = np.ones(shape)
     steer_matrix_right[:,:int(shape[1]/2)] = 0 * steer_matrix_right[:,:int(shape[1]/2)]
     # ---
@@ -49,7 +48,6 @@ def detect_lane_markings(image: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         mask_left_edge:   Masked image for the dashed-yellow line (numpy.ndarray)
         mask_right_edge:  Masked image for the solid-white line (numpy.ndarray)
     """
-    print("!")
     h, w, _ = image.shape
     imghsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
 
