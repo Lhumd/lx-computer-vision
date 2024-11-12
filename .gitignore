@@ -6,3 +6,4 @@ html/*
 
 # otherwise CI thinks index not clean
 *.resolved
+duckietown-lx
