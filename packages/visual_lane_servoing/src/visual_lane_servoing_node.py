@@ -38,7 +38,7 @@ class LaneServoingNode(DTROS):
         # get the name of the robot
         self.veh = rospy.get_namespace().strip("/")
 
-        self.v_0 = 0.3  # Forward velocity command
+        self.v_0 = 0.083  # Forward velocity command
 
         # The following are used for scaling
         self.steer_max = -1
@@ -82,7 +82,7 @@ class LaneServoingNode(DTROS):
         # Get the steering gain (omega_max) from the calibration file
         # It defines the maximum omega used to scale normalized steering command
         kinematics_calib = self.read_params_from_calibration_file()
-        self.omega_max = kinematics_calib.get("omega_max", 6.0)
+        self.omega_max = kinematics_calib.get("omega_max", 1.)
 
         self.loginfo("Initialized!")
 
@@ -192,10 +192,16 @@ class LaneServoingNode(DTROS):
             self.logerr("Not Calibrated!")
             return
 
-        steer = float(np.sum(lt_mask * steer_matrix_left_lm)) + float(np.sum(rt_mask * steer_matrix_right_lm))
+        print()
+        #left yellow, right white
+        steer = 2.0 * float(np.sum(lt_mask * steer_matrix_left_lm)) + float(np.sum(rt_mask * steer_matrix_right_lm))
+        # steer = float(np.sum(lt_mask * steer_matrix_left_lm))
 
+        print()
+        print("left", float(np.sum(lt_mask * steer_matrix_left_lm)))
+        print("right", float(np.sum(rt_mask * steer_matrix_right_lm)))
         # now rescale from 0 to 1
-        steer_scaled = np.sign(steer) * rescale(min(np.abs(steer), self.steer_max), 0, self.steer_max)
+        steer_scaled = -0.2 * np.sign(steer) * rescale(min(np.abs(steer), self.steer_max), 0, self.steer_max)
 
         u = [self.v_0, steer_scaled * self.omega_max]
         self.publish_command(u)
