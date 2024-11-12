@@ -91,6 +91,7 @@ class LaneServoingNode(DTROS):
         """
         Call the right functions according to desktop icon the parameter.
         """
+        print("HERE")
 
         if msg.data not in ["init", "calibration", "go", "stop"]:
             self.loginfo(f"Activity '{msg.data}' not recognized. Exiting...")
@@ -168,6 +169,7 @@ class LaneServoingNode(DTROS):
             cv2.cvtColor(image, cv2.COLOR_BGR2GRAY), 0.1, rt_mask.astype(np.uint8), 0.8, 0
         )
 
+        print("@")
         lt_mask_viz = rgb_to_compressed_imgmsg(cv2.cvtColor(lt_mask_viz, cv2.COLOR_GRAY2RGB), "jpeg")
         rt_mask_viz = rgb_to_compressed_imgmsg(cv2.cvtColor(rt_mask_viz, cv2.COLOR_GRAY2RGB), "jpeg")
 
@@ -175,6 +177,8 @@ class LaneServoingNode(DTROS):
         self._rt_mask_pub.publish(rt_mask_viz)
 
         if self.VLS_ACTION == "calibration":
+
+            self.loginfo(f"lt_mask: {lt_mask}")
             self.steer_max = max(
                 self.steer_max,
                 2
@@ -183,11 +187,12 @@ class LaneServoingNode(DTROS):
                     float(np.sum(rt_mask * steer_matrix_right_lm)),
                 ),
             )
+            # self.loginfo(f"Command v : {np.round(u[0], 2)},  omega : {np.round(u[1], 2)}")
 
         if self.VLS_ACTION != "go" or self.VLS_STOPPED:
             return
 
-        if self.steer_max == -1:
+        if self.steer_max == -1 and False:
             self.logerr("Not Calibrated!")
             return
 
